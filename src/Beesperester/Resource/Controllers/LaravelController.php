@@ -1,6 +1,6 @@
 <?php
 
-namespace Beesperester\Resource\Controller;
+namespace Beesperester\Resource\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;

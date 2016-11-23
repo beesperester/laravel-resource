@@ -1,11 +1,11 @@
 <?php
 
-namespace Beesperester\Resource\Controller;
+namespace Beesperester\Resource\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use Beesperester\Resource\ResourceModelInterface;
+use Beesperester\Resource\Models\ResourceModelInterface;
 
 use Exception;
 

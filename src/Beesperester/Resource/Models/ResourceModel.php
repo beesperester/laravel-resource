@@ -1,6 +1,6 @@
 <?php
 
-namespace Beesperester\Resource\Model;
+namespace Beesperester\Resource\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
