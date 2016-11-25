@@ -10,5 +10,5 @@ interface ResourceModelInterface
     * @var Client $client
     * @return array
     */
-    public static function getValidationRules(ResourceModelInterface $instance = NULL, Array $data = []);
+    public static function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []);
 }

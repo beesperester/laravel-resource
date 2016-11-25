@@ -14,6 +14,44 @@ class ResourceViewController extends LaravelController implements ResourceContro
     }
 
     /**
+    * Create new Instance.
+    *
+    * @var Request $request
+    * @return Instance
+    */
+    public function create(Request $request) {
+        return view($this->getInstanceView('create'));
+    }
+
+    /**
+    * Destroy Instance.
+    *
+    * @var Request $request
+    * @return array
+    */
+    public function destroy(Request $request) {
+        $instance = $this->api->destroy($request);
+
+        return redirect($this->api->instance_parameter);
+    }
+
+    /**
+    * Edit Instance.
+    *
+    * @var Request $request
+    * @return Instance
+    */
+    public function edit(Request $request) {
+        $instance = $this->api->getInstance($request->{$this->api->instance_parameter});
+
+        $view_data = [];
+
+        $view_data[$this->api->instance_parameter] = $instance;
+
+        return view($this->getInstanceView('edit'), $view_data);
+    }
+
+    /**
     * Get pluralized name.
     *
     * @return string
@@ -48,13 +86,19 @@ class ResourceViewController extends LaravelController implements ResourceContro
     }
 
     /**
-    * Create new Instance.
+    * Show Instance.
     *
     * @var Request $request
     * @return Instance
     */
-    public function create(Request $request) {
-        return view($this->getInstanceView('create'));
+    public function show(Request $request) {
+        $instance = $this->api->show($request);
+
+        $view_data = [];
+
+        $view_data[$this->api->instance_parameter] = $instance;
+
+        return view($this->getInstanceView('show'), $view_data);
     }
 
     /**
@@ -75,38 +119,6 @@ class ResourceViewController extends LaravelController implements ResourceContro
     }
 
     /**
-    * Show Instance.
-    *
-    * @var Request $request
-    * @return Instance
-    */
-    public function show(Request $request) {
-        $instance = $this->api->show($request);
-
-        $view_data = [];
-
-        $view_data[$this->api->instance_parameter] = $instance;
-
-        return view($this->getInstanceView('show'), $view_data);
-    }
-
-    /**
-    * Edit Instance.
-    *
-    * @var Request $request
-    * @return Instance
-    */
-    public function edit(Request $request) {
-        $instance = $this->api->getInstance($request->{$this->api->instance_parameter});
-
-        $view_data = [];
-
-        $view_data[$this->api->instance_parameter] = $instance;
-
-        return view($this->getInstanceView('edit'), $view_data);
-    }
-
-    /**
     * Update Instance.
     *
     * @var Request $request
@@ -116,17 +128,5 @@ class ResourceViewController extends LaravelController implements ResourceContro
         $instance = $this->api->update($request);
 
         return redirect($this->api->instance_parameter . '/' . $instance->id);
-    }
-
-    /**
-    * Destroy Instance.
-    *
-    * @var Request $request
-    * @return array
-    */
-    public function destroy(Request $request) {
-        $instance = $this->api->destroy($request);
-
-        return redirect($this->api->instance_parameter);
     }
 }

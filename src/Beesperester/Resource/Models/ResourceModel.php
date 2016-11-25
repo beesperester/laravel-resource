@@ -7,12 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class ResourceModel extends Model implements ResourceModelInterface
 {
     /**
+    * An array describing the instance relations.
+    *
+    * @var array
+    */
+    public $relations = [
+        //
+    ];
+
+    /**
     * Get validation rules.
     *
     * @var ResourceModelInterface $instance
     * @return array
     */
-    public static function getValidationRules(ResourceModelInterface $instance = NULL, Array $data = []) {
+    public static function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []) {
         return [];
     }
 }

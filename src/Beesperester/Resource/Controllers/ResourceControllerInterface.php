@@ -6,13 +6,6 @@ use Illuminate\Http\Request;
 
 interface ResourceControllerInterface
 {
-    /**
-    * Show all instances.
-    *
-    * @var Request $request
-    * @return array
-    */
-    public function index(Request $request);
 
     /**
     * Create new Instance.
@@ -23,20 +16,12 @@ interface ResourceControllerInterface
     public function create(Request $request);
 
     /**
-    * Store new Instance.
+    * Destroy Instance.
     *
     * @var Request $request
-    * @return Instance
+    * @return array
     */
-    public function store(Request $request);
-
-    /**
-    * Show Instance.
-    *
-    * @var Request $request
-    * @return Instance
-    */
-    public function show(Request $request);
+    public function destroy(Request $request);
 
     /**
     * Edit Instance.
@@ -47,18 +32,34 @@ interface ResourceControllerInterface
     public function edit(Request $request);
 
     /**
+    * Show all instances.
+    *
+    * @var Request $request
+    * @return array
+    */
+    public function index(Request $request);
+
+    /**
+    * Show Instance.
+    *
+    * @var Request $request
+    * @return Instance
+    */
+    public function show(Request $request);
+
+    /**
+    * Store new Instance.
+    *
+    * @var Request $request
+    * @return Instance
+    */
+    public function store(Request $request);
+
+    /**
     * Update Instance.
     *
     * @var Request $request
     * @return Instance
     */
     public function update(Request $request);
-
-    /**
-    * Destroy Instance.
-    *
-    * @var Request $request
-    * @return array
-    */
-    public function destroy(Request $request);
 }

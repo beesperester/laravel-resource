@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 use Beesperester\Resource\Models\ResourceModelInterface;
+use Beesperester\Resource\Exceptions\MissingInstanceException;
+use Beesperester\Resource\Exceptions\ValidateInstanceException;
+use Beesperester\Resource\Exceptions\MissingKeyException;
 
 use Exception;
 
@@ -22,27 +25,17 @@ class ResourceApiController extends LaravelController implements ResourceControl
     }
 
     /**
-    * Show all instances.
+    * Create new ResourceModelInterface.
     *
     * @var Request $request
-    * @return array
-    */
-    public function index(Request $request) {
-        return call_user_func($this->instance_name . '::all');
-    }
-
-    /**
-    * Create new Instance.
-    *
-    * @var Request $request
-    * @return Instance
+    * @return ResourceModelInterface
     */
     public function create(Request $request) {
 
     }
 
     /**
-    * Create new Instance of Api.
+    * Create new ResourceModelInterface of Api.
     *
     * @return ApiController
     */
@@ -51,73 +44,96 @@ class ResourceApiController extends LaravelController implements ResourceControl
     }
 
     /**
-    * Store new Instance.
+    * Destroy ResourceModelInterface.
     *
     * @var Request $request
-    * @return Instance
+    * @return array
     */
-    public function store(Request $request) {
-        $rules = $this->getValidationRules(NULL, $request->all());
-
-        $this->validate($request, $rules);
-
-        $instance = $this->storeInstance($request->all());
-
-        $this->updateInstanceConnections($request, $instance);
-
-        return $instance;
+    public function destroy(Request $request) {
+        return $this->destroyFromRequest($request);
     }
 
     /**
-    * Show Instance.
+    * Destroy ResourceModelInterface from Request.
     *
     * @var Request $request
-    * @return Instance
+    * @return array
     */
-    public function show(Request $request) {
-        return $this->getInstance($request->{$this->instance_parameter});
+    public function destroyFromRequest(Request $request) {
+        $instance = $this->getInstance($request->{$this->instance_parameter});
+
+        return $this->destroyInstance($instance);
     }
 
     /**
-    * Edit Instance.
+    * Destroy ResourceModelInterface from Array.
+    *
+    * @var Array $array
+    * @return array
+    */
+    public function destroyFromData(Array $data = []) {
+        if (!isset($data['id'])) {
+            throw new MissingKeyException('Missing id key in data');
+        }
+
+        $instance = $this->getInstance($data['id']);
+
+        return $this->destroyInstance($instance);
+    }
+
+    /**
+    * Destroy the actual ResourceModelInterface.
+    *
+    * @var ResourceModelInterface $instance
+    * @return ResourceModelInterface
+    */
+    public function destroyInstance(ResourceModelInterface $instance) {
+        $instance_data = $instance->toArray();
+
+        $instance->delete();
+
+        return $instance_data;
+    }
+
+    /**
+    * Edit ResourceModelInterface.
     *
     * @var Request $request
-    * @return Instance
+    * @return ResourceModelInterface
     */
     public function edit(Request $request) {
 
     }
 
     /**
-    * Update Instance.
+    * Get the actual ResourceModelInterface.
     *
-    * @var Request $request
-    * @return Instance
+    * @var array $data
+    * @return ResourceModelInterface
     */
-    public function update(Request $request) {
-        $instance = $this->getInstance($request->{$this->instance_parameter});
-
-        $rules = $this->getValidationRules($instance);
-
-        $this->validate($request, $rules);
-
-        $instance = $this->updateInstance($instance, $request->all());
-
-        $this->updateInstanceConnections($request, $instance);
-
-        return $instance;
+    public function getInstance($id) {
+        return call_user_func($this->instance_name . '::findOrFail', $id);
     }
 
     /**
-    * Destroy Instance.
+    * Get validation rules from Model.
+    *
+    * @var ResourceModelInterface $instance
+    * @var Array $data
+    * @return Array
+    */
+    public function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []) {
+         return call_user_func($this->instance_name . '::getValidationRules', $instance, $data);
+    }
+
+    /**
+    * Show all instances.
     *
     * @var Request $request
     * @return array
     */
-    public function destroy(Request $request) {
-        $instance = $this->getInstance($request->{$this->instance_parameter});
-
-        return $this->destroyInstance($instance);
+    public function index(Request $request) {
+        return call_user_func($this->instance_name . '::all');
     }
 
     /**
@@ -131,31 +147,74 @@ class ResourceApiController extends LaravelController implements ResourceControl
     }
 
     /**
-    * Get the actual Instance.
+    * Store new ResourceModelInterface.
     *
-    * @var array $data
-    * @return Instance
+    * @var Request $request
+    * @return ResourceModelInterface
     */
-    public function getInstance($id) {
-        return call_user_func($this->instance_name . '::findOrFail', $id);
+    public function store(Request $request) {
+        return $this->storeFromRequest($request);
     }
 
     /**
-    * Get validation rules from Model.
+    * Store new ResourceModelInterface from Request.
     *
-    * @var ResourceModelInterface $instance
+    * @var Request $request
+    * @return ResourceModelInterface
+    */
+    public function storeFromRequest(Request $request) {
+        $rules = $this->getValidationRules(Null, $request->all());
+
+        $this->validate($request, $rules);
+
+        $instance = $this->storeInstance($request->all());
+
+        try {
+            $this->updateInstanceConnectionsFromRequest($request, $instance);
+        } catch (MissingInstanceException $e) {
+
+        } catch (Exception $e) {
+
+        }
+
+        return $instance;
+    }
+
+    /**
+    * Store new ResourceModelInterface from Array.
+    *
     * @var Array $data
-    * @return Array
+    * @return ResourceModelInterface
     */
-    public function getValidationRules(ResourceModelInterface $instance = NULL, Array $data = []) {
-         return call_user_func($this->instance_name . '::getValidationRules', $instance, $data);
+    public function storeFromData(Array $data = [], $update_connections = False) {
+        $rules = $this->getValidationRules(Null, $data);
+
+        $validator = Validator::make($data, $rules);
+
+        if ($validator->fails()) {
+            throw new ValidateInstanceException('Unable to to store instance: ' . implode(', ', $validator->errors()->toArray()));
+        }
+
+        $instance = $this->storeInstance($data);
+
+        if ($update_connections) {
+            try {
+                $this->updateInstanceConnectionsFromData($data, $instance);
+            } catch (MissingInstanceException $e) {
+
+            } catch (Exception $e) {
+
+            }
+        }
+
+        return $instance;
     }
 
     /**
-    * Create the actual Instance.
+    * Create the actual ResourceModelInterface.
     *
     * @var array $data
-    * @return Instance
+    * @return ResourceModelInterface
     */
     public function storeInstance(Array $data = []) {
         $data = $this->prepareData($data);
@@ -164,29 +223,88 @@ class ResourceApiController extends LaravelController implements ResourceControl
     }
 
     /**
-    * Create the actual Instance after validation.
+    * Show ResourceModelInterface.
     *
-    * @var array $data
-    * @return Instance
+    * @var Request $request
+    * @return ResourceModelInterface
     */
-    public function storeInstanceWithValidation(Array $data = []) {
-        $rules = $this->getValidationRules(NULL, $data);
+    public function show(Request $request) {
+        return $this->getInstance($request->{$this->instance_parameter});
+    }
+
+    /**
+    * Update ResourceModelInterface.
+    *
+    * @var Request $request
+    * @return ResourceModelInterface
+    */
+    public function update(Request $request) {
+        return $this->updateFromRequest($request);
+    }
+
+    /**
+    * Update ResourceModelInterface from Request.
+    *
+    * @var Request $request
+    * @return ResourceModelInterface
+    */
+    public function updateFromRequest(Request $request) {
+        $instance = $this->getInstance($request->{$this->instance_parameter});
+
+        $rules = $this->getValidationRules($instance);
+
+        $this->validate($request, $rules);
+
+        $instance = $this->updateInstance($instance, $request->all());
+
+        try {
+            $this->updateInstanceConnectionsFromRequest($request, $instance);
+        } catch (MissingInstanceException $e) {
+
+        } catch (Exception $e) {
+
+        }
+
+        return $instance;
+    }
+
+    /**
+    * Update ResourceModelInterface from Array.
+    *
+    * @var ResourceModelInterface $instance
+    * @var Array $data
+    * @return ResourceModelInterface
+    */
+    public function updateFromData(ResourceModelInterface $instance, Array $data = [], $update_connections = False) {
+        $rules = $this->getValidationRules($instance, $data);
 
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            throw new Exception('Store validation error');
+            throw new ValidateInstanceException('Unable to to update instance: ' . implode(', ', $validator->errors()->toArray()));
         }
 
-        return $this->storeInstance($data);
+        $instance = $this->updateInstance($instance, $data);
+
+        if ($update_connections) {
+            try {
+                $this->updateInstanceConnectionsFromData($data, $instance);
+            } catch (MissingInstanceException $e) {
+
+            } catch (Exception $e) {
+
+            }
+        }
+
+        return $instance;
     }
 
     /**
-    * Update the actual Instance.
+    * Update the actual ResourceModelInterface.
     *
-    * @var Instance $instance
+    * @var ResourceModelInterface $instance
     * @var array $data
-    * @return Instance
+    * @return ResourceModelInterface
     */
     public function updateInstance(ResourceModelInterface $instance, Array $data = []) {
         $data = $this->prepareData($data);
@@ -197,12 +315,26 @@ class ResourceApiController extends LaravelController implements ResourceControl
     }
 
     /**
-    * Update Instance Connections.
+    * Update ResourceModelInterface Connections from Request.
     *
     * @var Request $request
     * @var ResourceModelInterface $instance
     */
-    public function updateInstanceConnections(Request $request, ResourceModelInterface $instance) {
+    public function updateInstanceConnectionsFromRequest(Request $request, ResourceModelInterface $instance = Null) {
+        return $this->updateInstanceConnectionsFromData($request->all(), $instance);
+    }
+
+    /**
+    * Update ResourceModelInterface Connections from Array.
+    *
+    * @var Array $data
+    * @var ResourceModelInterface $instance
+    */
+    public function updateInstanceConnectionsFromData(Array $data = [], ResourceModelInterface $instance = Null) {
+
+        if (!$instance) {
+            throw new MissingInstanceException('Missing instance');
+        }
 
         $relations = $instance->relations;
 
@@ -210,66 +342,37 @@ class ResourceApiController extends LaravelController implements ResourceControl
             // update belongsToMany relations
             foreach ($relations['belongsToMany'] as $related_instance_name => $relation_config) {
                 // update relations
-                $input_name = $relation_config['parameter'] . '_ids';
+                $relation_attribute = $relation_config['attribute'];
 
-                if ($request->has($input_name)) {
-                    $input_data = $request->{$input_name};
+                if (array_key_exists($relation_attribute, $data)) {
+                    $input_data = $data[$relation_attribute];
 
                     #echo $relation_config['attribute'];
                     #echo '<pre>';print_r($input_data);echo '</pre>';
 
-                    // remove babes not present in babe_ids
-                    foreach ($instance->{$relation_config['attribute']} as $related_instance) {
+                    // remove relations not present in attribute
+                    foreach ($instance->{$relation_attribute} as $related_instance) {
 
                         if (!in_array($related_instance->id, $input_data)) {
                             #echo 'detach ' . $related_instance->id . '<br/>';
-                            $instance->{$relation_config['attribute']}()->detach($related_instance);
+                            $instance->{$relation_attribute}()->detach($related_instance);
                         }
                     }
 
                     // add new related instance
-                    foreach ($input_data as $related_instance_id) {
-                        $related_instance = call_user_func($related_instance_name . '::find', $related_instance_id);
+                    foreach ($input_data as $related_instance_data) {
+                        if (array_key_exists('id', $related_instance_data)) {
+                            $id = $related_instance_data['id'];
 
-                        if ($related_instance && !$instance->{$relation_config['attribute']}->contains($related_instance)) {
-                            $instance->{$relation_config['attribute']}()->attach($related_instance);
+                            $related_instance = call_user_func($related_instance_name . '::find', $id);
+
+                            if ($related_instance && !$instance->{$relation_attribute}->contains($related_instance)) {
+                                $instance->{$relation_attribute}()->attach($related_instance);
+                            }
                         }
                     }
                 }
             }
         }
-    }
-
-    /**
-    * Update the actual Instance with validation.
-    *
-    * @var Instance $instance
-    * @var array $data
-    * @return Instance
-    */
-    public function updateInstanceWithValidation(ResourceModelInterface $instance, Array $data = []) {
-        $rules = $this->getValidationRules($instance, $data);
-
-        $validator = Validator::make($data, $rules);
-
-        if ($validator->fails()) {
-            throw new Exception('Update validation error');
-        }
-
-        return $this->updateInstance($instance, $data);
-    }
-
-    /**
-    * Destroy the actual Instance.
-    *
-    * @var Instance $instance
-    * @return Instance
-    */
-    public function destroyInstance(ResourceModelInterface $instance) {
-        $instance_data = $instance->toArray();
-
-        $instance->delete();
-
-        return $instance_data;
     }
 }

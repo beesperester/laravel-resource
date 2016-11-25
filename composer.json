@@ -2,6 +2,7 @@
     "name": "beesperester/laravel-resource",
     "autoload": {
         "psr-4" : {
+            "tests\\": "tests/",
             "Beesperester\\Resource\\" : "src/Beesperester/Resource"
         }
     },

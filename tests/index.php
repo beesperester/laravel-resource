@@ -5,13 +5,8 @@ ini_set('display_errors', 1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Beesperester\Resource\Controllers\ResourceApiController;
+$api = tests\TestApiController::createAdapter();
 
-class ApiController extends ResourceApiController
-{
-
-}
-
-$api = ApiController::createAdapter();
-
-echo 'foo';
+$api->storeFromData([
+    'name' => 'test'
+]);
