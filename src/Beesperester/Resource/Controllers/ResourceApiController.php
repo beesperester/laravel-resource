@@ -347,14 +347,10 @@ class ResourceApiController extends LaravelController implements ResourceControl
                 if (array_key_exists($relation_attribute, $data)) {
                     $input_data = $data[$relation_attribute];
 
-                    #echo $relation_config['attribute'];
-                    #echo '<pre>';print_r($input_data);echo '</pre>';
-
                     // remove relations not present in attribute
                     foreach ($instance->{$relation_attribute} as $related_instance) {
 
-                        if (!in_array($related_instance->id, $input_data)) {
-                            #echo 'detach ' . $related_instance->id . '<br/>';
+                        if (!in_array($related_instance->id, array_column($input_data, 'id'))) {
                             $instance->{$relation_attribute}()->detach($related_instance);
                         }
                     }
