@@ -9,7 +9,7 @@ class ResourceModel extends Model implements ResourceModelInterface
     /**
     * An array describing the instance relations.
     *
-    * @var array
+    * @param array
     */
     public $relations = [
         //
@@ -18,7 +18,7 @@ class ResourceModel extends Model implements ResourceModelInterface
     /**
     * Get validation rules.
     *
-    * @var ResourceModelInterface $instance
+    * @param ResourceModelInterface $instance
     * @return array
     */
     public static function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []) {

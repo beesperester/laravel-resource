@@ -10,7 +10,7 @@ interface ResourceControllerInterface
     /**
     * Create new Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function create(Request $request);
@@ -18,7 +18,7 @@ interface ResourceControllerInterface
     /**
     * Destroy Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return array
     */
     public function destroy(Request $request);
@@ -26,7 +26,7 @@ interface ResourceControllerInterface
     /**
     * Edit Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function edit(Request $request);
@@ -34,7 +34,7 @@ interface ResourceControllerInterface
     /**
     * Show all instances.
     *
-    * @var Request $request
+    * @param Request $request
     * @return array
     */
     public function index(Request $request);
@@ -42,7 +42,7 @@ interface ResourceControllerInterface
     /**
     * Show Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function show(Request $request);
@@ -50,7 +50,7 @@ interface ResourceControllerInterface
     /**
     * Store new Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function store(Request $request);
@@ -58,7 +58,7 @@ interface ResourceControllerInterface
     /**
     * Update Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function update(Request $request);

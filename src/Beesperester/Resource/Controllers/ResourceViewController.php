@@ -16,7 +16,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Create new Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function create(Request $request) {
@@ -26,7 +26,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Destroy Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return array
     */
     public function destroy(Request $request) {
@@ -38,7 +38,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Edit Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function edit(Request $request) {
@@ -72,7 +72,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Show all instances.
     *
-    * @var Request $request
+    * @param Request $request
     * @return array
     */
     public function index(Request $request) {
@@ -88,7 +88,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Show Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function show(Request $request) {
@@ -104,7 +104,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Store new Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function store(Request $request) {
@@ -121,7 +121,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     /**
     * Update Instance.
     *
-    * @var Request $request
+    * @param Request $request
     * @return Instance
     */
     public function update(Request $request) {

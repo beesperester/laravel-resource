@@ -7,7 +7,7 @@ interface ResourceModelInterface
     /**
     * Get validation rules.
     *
-    * @var Client $client
+    * @param Client $client
     * @return array
     */
     public static function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []);
