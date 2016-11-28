@@ -4,6 +4,7 @@ namespace Beesperester\Resource\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 use Beesperester\Resource\Models\ResourceModelInterface;
 use Beesperester\Resource\Exceptions\MissingInstanceException;
@@ -103,6 +104,30 @@ class ResourceApiController extends LaravelController implements ResourceControl
     */
     public function edit(Request $request) {
 
+    }
+
+    /**
+    * Find or create.
+    *
+    * @param Relation $relation
+    * @param Array $where
+    * @param Array $data
+    * @return Instance
+    */
+    public static function findOrCreate(Relation $relation = Null, Array $where = [], Array $data = []) {
+        if ($relation) {
+            $query = $relation->where($where);
+        } else {
+            $query = call_user_func(self::createAdapter()->instance_name . '::where', $where);
+        }
+
+        $find = $query->first();
+
+        if ($find) {
+            return $find;
+        } else {
+            return self::createAdapter()->storeFromData($data);
+        }
     }
 
     /**
@@ -336,6 +361,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
             throw new MissingInstanceException('Missing instance');
         }
 
+        #echo '<pre>';print_r($data);echo '</pre>';die();
+
         $relations = $instance->relations;
 
         if (array_key_exists('belongsToMany', $relations)) {
@@ -347,10 +374,16 @@ class ResourceApiController extends LaravelController implements ResourceControl
                 if (array_key_exists($relation_attribute, $data)) {
                     $input_data = $data[$relation_attribute];
 
+                    #echo '<pre>';print_r(['attribute' => $relation_attribute, 'data' => $input_data]);echo '</pre>';die();
+
+                    #echo $relation_config['attribute'];
+                    #echo '<pre>';print_r($input_data);echo '</pre>';
+
                     // remove relations not present in attribute
                     foreach ($instance->{$relation_attribute} as $related_instance) {
 
                         if (!in_array($related_instance->id, array_column($input_data, 'id'))) {
+                            #echo 'detach ' . $related_instance->id . '<br/>';
                             $instance->{$relation_attribute}()->detach($related_instance);
                         }
                     }
