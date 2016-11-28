@@ -217,7 +217,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            throw new ValidateInstanceException('Unable to to store instance: ' . implode(', ', $validator->errors()->toArray()));
+            throw new ValidateInstanceException('Unable to to store instance');
         }
 
         $instance = $this->storeInstance($data);
