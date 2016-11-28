@@ -28,7 +28,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Create new ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function create(Request $request) {
@@ -47,7 +47,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Destroy ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return array
     */
     public function destroy(Request $request) {
@@ -57,7 +57,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Destroy ResourceModelInterface from Request.
     *
-    * @param Request $request
+    * @var Request $request
     * @return array
     */
     public function destroyFromRequest(Request $request) {
@@ -69,7 +69,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Destroy ResourceModelInterface from Array.
     *
-    * @param Array $array
+    * @var Array $array
     * @return array
     */
     public function destroyFromData(Array $data = []) {
@@ -85,7 +85,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Destroy the actual ResourceModelInterface.
     *
-    * @param ResourceModelInterface $instance
+    * @var ResourceModelInterface $instance
     * @return ResourceModelInterface
     */
     public function destroyInstance(ResourceModelInterface $instance) {
@@ -99,7 +99,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Edit ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function edit(Request $request) {
@@ -133,7 +133,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Get the actual ResourceModelInterface.
     *
-    * @param array $data
+    * @var array $data
     * @return ResourceModelInterface
     */
     public function getInstance($id) {
@@ -143,8 +143,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Get validation rules from Model.
     *
-    * @param ResourceModelInterface $instance
-    * @param Array $data
+    * @var ResourceModelInterface $instance
+    * @var Array $data
     * @return Array
     */
     public function getValidationRules(ResourceModelInterface $instance = Null, Array $data = []) {
@@ -154,7 +154,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Show all instances.
     *
-    * @param Request $request
+    * @var Request $request
     * @return array
     */
     public function index(Request $request) {
@@ -164,7 +164,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Prepare Data for insertion.
     *
-    * @param Array $data
+    * @var Array $data
     * @return Array
     */
     public function prepareData(Array $data = []) {
@@ -174,7 +174,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Store new ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function store(Request $request) {
@@ -184,7 +184,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Store new ResourceModelInterface from Request.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function storeFromRequest(Request $request) {
@@ -208,7 +208,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Store new ResourceModelInterface from Array.
     *
-    * @param Array $data
+    * @var Array $data
     * @return ResourceModelInterface
     */
     public function storeFromData(Array $data = [], $update_connections = False) {
@@ -238,7 +238,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Create the actual ResourceModelInterface.
     *
-    * @param array $data
+    * @var array $data
     * @return ResourceModelInterface
     */
     public function storeInstance(Array $data = []) {
@@ -250,7 +250,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Show ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function show(Request $request) {
@@ -260,7 +260,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update ResourceModelInterface.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function update(Request $request) {
@@ -270,7 +270,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update ResourceModelInterface from Request.
     *
-    * @param Request $request
+    * @var Request $request
     * @return ResourceModelInterface
     */
     public function updateFromRequest(Request $request) {
@@ -296,8 +296,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update ResourceModelInterface from Array.
     *
-    * @param ResourceModelInterface $instance
-    * @param Array $data
+    * @var ResourceModelInterface $instance
+    * @var Array $data
     * @return ResourceModelInterface
     */
     public function updateFromData(ResourceModelInterface $instance, Array $data = [], $update_connections = False) {
@@ -306,7 +306,7 @@ class ResourceApiController extends LaravelController implements ResourceControl
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            throw new ValidateInstanceException('Unable to to update instance: ' . implode(', ', $validator->errors()->toArray()));
+            throw new ValidateInstanceException('Unable to to update instance');
         }
 
         $instance = $this->updateInstance($instance, $data);
@@ -327,8 +327,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update the actual ResourceModelInterface.
     *
-    * @param ResourceModelInterface $instance
-    * @param array $data
+    * @var ResourceModelInterface $instance
+    * @var array $data
     * @return ResourceModelInterface
     */
     public function updateInstance(ResourceModelInterface $instance, Array $data = []) {
@@ -342,8 +342,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update ResourceModelInterface Connections from Request.
     *
-    * @param Request $request
-    * @param ResourceModelInterface $instance
+    * @var Request $request
+    * @var ResourceModelInterface $instance
     */
     public function updateInstanceConnectionsFromRequest(Request $request, ResourceModelInterface $instance = Null) {
         return $this->updateInstanceConnectionsFromData($request->all(), $instance);
@@ -352,8 +352,8 @@ class ResourceApiController extends LaravelController implements ResourceControl
     /**
     * Update ResourceModelInterface Connections from Array.
     *
-    * @param Array $data
-    * @param ResourceModelInterface $instance
+    * @var Array $data
+    * @var ResourceModelInterface $instance
     */
     public function updateInstanceConnectionsFromData(Array $data = [], ResourceModelInterface $instance = Null) {
 
