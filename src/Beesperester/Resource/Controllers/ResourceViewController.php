@@ -42,7 +42,7 @@ class ResourceViewController extends LaravelController implements ResourceContro
     * @return Instance
     */
     public function edit(Request $request) {
-        $instance = $this->api->getInstance($request->{$this->api->instance_parameter});
+        $instance = $this->api->edit($request);
 
         $view_data = [];
 
