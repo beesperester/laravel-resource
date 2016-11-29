@@ -38,9 +38,10 @@ class ResourceModel extends Model
     * @param Relation $relation
     * @param Array $where
     * @param Array $data
+    * @param Boolean $validate
     * @return Instance
     */
-    public static function findOrCreate(Relation $relation = Null, Array $where = [], Array $data = []) {
+    public static function findOrCreate(Relation $relation = Null, Array $where = [], Array $data = [], $validate = True) {
         if ($relation) {
             $query = $relation->where($where);
         } else {
@@ -52,6 +53,10 @@ class ResourceModel extends Model
         if ($find) {
             return $find;
         } else {
+            if ($validate) {
+                static::validate($data);
+            }
+
             return static::create($data);
         }
     }
